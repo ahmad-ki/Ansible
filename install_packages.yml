@@ -1,0 +1,9 @@
+- name: Install packages on all Linux servers
+  hosts: linux
+  become: yes
+
+  tasks:
+    - name: Install vim
+      package:
+        name: vim
+        state: present
