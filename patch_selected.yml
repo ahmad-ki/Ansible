@@ -1,0 +1,43 @@
+- name: Patch selected servers (Security Updates)
+  hosts: linux
+  become: yes
+  serial: 1   # very important (one server at a time)
+
+  vars:
+    target_hosts:
+      - 192.168.4.104
+      - 192.168.4.138
+      - 192.168.4.60
+
+  tasks:
+
+    - name: Skip non-target servers
+      meta: end_host
+      when: inventory_hostname not in target_hosts
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Check security updates
+      shell: apt list --upgradable 2>/dev/null | grep security || true
+      register: security_updates
+
+    - name: Show updates
+      debug:
+        msg: "{{ inventory_hostname }} updates: {{ security_updates.stdout_lines }}"
+
+    - name: Apply security updates
+      apt:
+        upgrade: safe
+      when: security_updates.stdout != ""
+
+    - name: Check reboot requirement
+      stat:
+        path: /var/run/reboot-required
+      register: reboot_required
+
+    - name: Report reboot requirement
+      debug:
+        msg: "{{ inventory_hostname }} requires reboot"
+      when: reboot_required.stat.exists
