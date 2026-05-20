@@ -1,0 +1,15 @@
+- name: Install VMware Tools on Linux servers
+  hosts: linux
+  become: yes
+
+  tasks:
+    - name: Install open-vm-tools (Linux)
+      package:
+        name: open-vm-tools
+        state: latest
+
+    - name: Ensure vmtools service is running
+      service:
+        name: vmtoolsd
+        state: started
+        enabled: yes
