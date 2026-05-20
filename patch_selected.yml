@@ -1,19 +1,9 @@
-- name: Patch selected servers (Security Updates)
-  hosts: linux
+- name: Patch selected servers
+  hosts: 192.168.4.104,192.168.4.138,192.168.4.60
   become: yes
-  serial: 1   # very important (one server at a time)
-
-  vars:
-    target_hosts:
-      - 192.168.4.104
-      - 192.168.4.138
-      - 192.168.4.60
+  serial: 1
 
   tasks:
-
-    - name: Skip non-target servers
-      meta: end_host
-      when: inventory_hostname not in target_hosts
 
     - name: Update apt cache
       apt:
