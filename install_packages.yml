@@ -3,9 +3,10 @@
   become: yes
 
   tasks:
-    - name: Ensure vim and nano are installed
+    - name: Ensure editors are installed
       package:
         name:
           - vim
           - nano
+          - neovim
         state: present
